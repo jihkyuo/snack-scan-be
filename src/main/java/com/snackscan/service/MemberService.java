@@ -1,8 +1,11 @@
 package com.snackscan.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.snackscan.dto.request.MemberUpdateDto;
 import com.snackscan.entity.Member;
 import com.snackscan.repository.MemberRepository;
 
@@ -22,6 +25,29 @@ public class MemberService {
     return member.getId();
   }
 
+  // 회원 조회 (단일)
+  public Member findOne(Long memberId) {
+    return memberRepository.findOptionalById(memberId);
+  }
+
+  // 전체 회원 조회
+  public List<Member> findMembers() {
+    return memberRepository.findAll();
+  }
+
+  // 회원 정보 수정
+  public void update(Long memberId, MemberUpdateDto updateDto) {
+    Member member = findByIdOrThrow(memberId);
+    member.updateInfo(updateDto.getName(), updateDto.getPhoneNumber());
+  }
+
+  // 회원 삭제
+  public void delete(Long memberId) {
+    Member member = findByIdOrThrow(memberId);
+    memberRepository.delete(member);
+  }
+
+  // 중복 회원 검증
   private void validateDuplicateMember(Member member) {
     Member findMember = memberRepository.findByLoginId(member.getLoginId());
     if (findMember != null) {
@@ -29,4 +55,9 @@ public class MemberService {
     }
   }
 
+  // 회원 ID로 조회, 없으면 예외 발생
+  private Member findByIdOrThrow(Long memberId) {
+    return memberRepository.findById(memberId)
+        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+  }
 }
