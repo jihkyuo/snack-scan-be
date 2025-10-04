@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
             "Validation Failed",
             message,
             request.getDescription(false).replace("uri=", ""),
-            ErrorCode.INVALID_INPUT.getCode()
+            CommonErrorCode.INVALID_INPUT.getCode()
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
@@ -57,7 +57,7 @@ public class GlobalExceptionHandler {
             "Constraint Violation",
             ex.getMessage(),
             request.getDescription(false).replace("uri=", ""),
-            ErrorCode.INVALID_INPUT.getCode()
+            CommonErrorCode.INVALID_INPUT.getCode()
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
@@ -71,7 +71,7 @@ public class GlobalExceptionHandler {
             "Invalid Argument",
             ex.getMessage(),
             request.getDescription(false).replace("uri=", ""),
-            ErrorCode.INVALID_INPUT.getCode()
+            CommonErrorCode.INVALID_INPUT.getCode()
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
@@ -84,7 +84,7 @@ public class GlobalExceptionHandler {
             "Illegal State",
             ex.getMessage(),
             request.getDescription(false).replace("uri=", ""),
-            ErrorCode.INVALID_INPUT.getCode()
+            CommonErrorCode.INVALID_INPUT.getCode()
         );
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
@@ -98,7 +98,7 @@ public class GlobalExceptionHandler {
             "Internal Server Error",
             "서버 내부 오류가 발생했습니다.",
             request.getDescription(false).replace("uri=", ""),
-            ErrorCode.INTERNAL_SERVER_ERROR.getCode()
+            CommonErrorCode.INTERNAL_SERVER_ERROR.getCode()
         );
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
