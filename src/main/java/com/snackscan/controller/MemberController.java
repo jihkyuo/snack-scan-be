@@ -19,6 +19,7 @@ import com.snackscan.dto.response.MemberResponseDto;
 import com.snackscan.entity.Member;
 import com.snackscan.service.MemberService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -30,23 +31,16 @@ public class MemberController {
 
   // 회원 가입
   @PostMapping
-  public ResponseEntity<Long> join(@RequestBody MemberJoinDto request) {
-    try {
-      Member member = new Member(request.getLoginId(), request.getName(), request.getPhoneNumber());
-      Long memberId = memberService.join(member);
-      return ResponseEntity.status(HttpStatus.CREATED).body(memberId);
-    } catch (IllegalStateException e) {
-      return ResponseEntity.status(HttpStatus.CONFLICT).build();
-    }
+  public ResponseEntity<Long> join(@Valid @RequestBody MemberJoinDto request) {
+    Member member = new Member(request.getLoginId(), request.getName(), request.getPhoneNumber());
+    Long memberId = memberService.join(member);
+    return ResponseEntity.status(HttpStatus.CREATED).body(memberId);
   }
 
   // 회원 조회 (단일)
   @GetMapping("/{id}")
   public ResponseEntity<MemberResponseDto> findMember(@PathVariable Long id) {
     Member member = memberService.findOne(id);
-    if (member == null) {
-      return ResponseEntity.notFound().build();
-    }
     return ResponseEntity.ok(new MemberResponseDto(member));
   }
 
@@ -63,23 +57,15 @@ public class MemberController {
   // 회원 정보 수정
   @PutMapping("/{id}")
   public ResponseEntity<MemberResponseDto> updateMember(@PathVariable Long id, @RequestBody MemberUpdateDto updateDto) {
-    try {
-      memberService.update(id, updateDto);
-      Member updatedMember = memberService.findOne(id);
-      return ResponseEntity.ok(new MemberResponseDto(updatedMember));
-    } catch (IllegalArgumentException e) {
-      return ResponseEntity.notFound().build();
-    }
+    memberService.update(id, updateDto);
+    Member updatedMember = memberService.findOne(id);
+    return ResponseEntity.ok(new MemberResponseDto(updatedMember));
   }
 
   // 회원 삭제
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteMember(@PathVariable Long id) {
-    try {
-      memberService.delete(id);
-      return ResponseEntity.noContent().build();
-    } catch (IllegalArgumentException e) {
-      return ResponseEntity.notFound().build();
-    }
+    memberService.delete(id);
+    return ResponseEntity.noContent().build();
   }
 }

@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.snackscan.dto.request.MemberUpdateDto;
 import com.snackscan.entity.Member;
+import com.snackscan.exception.DuplicateMemberException;
+import com.snackscan.exception.MemberNotFoundException;
 import com.snackscan.repository.MemberRepository;
 
 @SpringBootTest
@@ -48,7 +50,7 @@ public class MemberServiceTest {
 
     // then
     assertThatThrownBy(() -> memberService.join(member2))
-        .isInstanceOf(IllegalStateException.class);
+        .isInstanceOf(DuplicateMemberException.class);
   }
 
   @Test
@@ -130,7 +132,7 @@ public class MemberServiceTest {
 
     // when & then
     assertThatThrownBy(() -> memberService.update(nonExistentId, new MemberUpdateDto()))
-        .isInstanceOf(IllegalArgumentException.class)
+        .isInstanceOf(MemberNotFoundException.class)
         .hasMessage("존재하지 않는 회원입니다.");
   }
 }

@@ -20,7 +20,7 @@ public class MemberRepositoryTest {
 
   @Test
   public void findByPhoneNumber() {
-    Member member = new Member("John Doe", "01012345678", "test1234");
+    Member member = new Member("test1234", "John Doe", "01012345678");
     Member savedMember = memberRepository.save(member);
     Member foundMember = memberRepository.findByPhoneNumber("01012345678");
 
