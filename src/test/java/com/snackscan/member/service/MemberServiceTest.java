@@ -8,10 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.snackscan.common.exception.BusinessException;
 import com.snackscan.member.dto.request.MemberUpdateDto;
 import com.snackscan.member.entity.Member;
-import com.snackscan.member.exception.DuplicateMemberException;
-import com.snackscan.member.exception.MemberNotFoundException;
 import com.snackscan.member.repository.MemberRepository;
 
 @SpringBootTest
@@ -50,7 +49,8 @@ public class MemberServiceTest {
 
     // then
     assertThatThrownBy(() -> memberService.join(member2))
-        .isInstanceOf(DuplicateMemberException.class);
+        .isInstanceOf(BusinessException.class)
+        .hasMessage("이미 존재하는 회원입니다.");
   }
 
   @Test
@@ -132,7 +132,7 @@ public class MemberServiceTest {
 
     // when & then
     assertThatThrownBy(() -> memberService.update(nonExistentId, new MemberUpdateDto()))
-        .isInstanceOf(MemberNotFoundException.class)
+        .isInstanceOf(BusinessException.class)
         .hasMessage("존재하지 않는 회원입니다.");
   }
 }
