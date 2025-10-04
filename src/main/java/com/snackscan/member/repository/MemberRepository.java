@@ -1,8 +1,8 @@
-package com.snackscan.repository;
+package com.snackscan.member.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.snackscan.entity.Member;
+import com.snackscan.member.entity.Member;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 

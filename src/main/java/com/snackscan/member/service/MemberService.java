@@ -1,4 +1,4 @@
-package com.snackscan.service;
+package com.snackscan.member.service;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,11 +6,11 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.snackscan.dto.request.MemberUpdateDto;
-import com.snackscan.entity.Member;
-import com.snackscan.exception.DuplicateMemberException;
-import com.snackscan.exception.MemberNotFoundException;
-import com.snackscan.repository.MemberRepository;
+import com.snackscan.member.dto.request.MemberUpdateDto;
+import com.snackscan.member.entity.Member;
+import com.snackscan.member.exception.DuplicateMemberException;
+import com.snackscan.member.exception.MemberNotFoundException;
+import com.snackscan.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
 

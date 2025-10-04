@@ -1,4 +1,4 @@
-package com.snackscan.entity;
+package com.snackscan.member.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -41,5 +41,4 @@ public class Member {
       this.phoneNumber = phoneNumber;
     }
   }
-
 }

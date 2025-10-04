@@ -1,4 +1,4 @@
-package com.snackscan.dto.request;
+package com.snackscan.member.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

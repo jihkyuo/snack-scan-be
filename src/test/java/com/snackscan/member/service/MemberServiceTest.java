@@ -1,4 +1,4 @@
-package com.snackscan.service;
+package com.snackscan.member.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -8,11 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.snackscan.dto.request.MemberUpdateDto;
-import com.snackscan.entity.Member;
-import com.snackscan.exception.DuplicateMemberException;
-import com.snackscan.exception.MemberNotFoundException;
-import com.snackscan.repository.MemberRepository;
+import com.snackscan.member.dto.request.MemberUpdateDto;
+import com.snackscan.member.entity.Member;
+import com.snackscan.member.exception.DuplicateMemberException;
+import com.snackscan.member.exception.MemberNotFoundException;
+import com.snackscan.member.repository.MemberRepository;
 
 @SpringBootTest
 @Transactional

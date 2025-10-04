@@ -1,4 +1,4 @@
-package com.snackscan.controller;
+package com.snackscan.member.controller;
 
 import java.util.List;
 
@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.snackscan.dto.request.MemberJoinDto;
-import com.snackscan.dto.request.MemberUpdateDto;
-import com.snackscan.dto.response.MemberResponseDto;
-import com.snackscan.entity.Member;
-import com.snackscan.service.MemberService;
+import com.snackscan.member.dto.request.MemberJoinDto;
+import com.snackscan.member.dto.request.MemberUpdateDto;
+import com.snackscan.member.dto.response.MemberResponseDto;
+import com.snackscan.member.entity.Member;
+import com.snackscan.member.service.MemberService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

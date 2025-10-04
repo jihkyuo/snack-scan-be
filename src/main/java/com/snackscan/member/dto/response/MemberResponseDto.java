@@ -1,7 +1,8 @@
-package com.snackscan.dto.response;
+package com.snackscan.member.dto.response;
+
+import com.snackscan.member.entity.Member;
 
 import lombok.Data;
-import com.snackscan.entity.Member;
 
 @Data
 public class MemberResponseDto {

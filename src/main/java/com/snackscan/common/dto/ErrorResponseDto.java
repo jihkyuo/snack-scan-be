@@ -1,4 +1,4 @@
-package com.snackscan.dto.response;
+package com.snackscan.common.dto;
 
 import java.time.LocalDateTime;
 
@@ -15,6 +15,7 @@ public class ErrorResponseDto {
     private String error;
     private String message;
     private String path;
+    private String errorCode;
 
     public static ErrorResponseDto of(int status, String error, String message, String path) {
         return new ErrorResponseDto(
@@ -22,7 +23,19 @@ public class ErrorResponseDto {
             status,
             error,
             message,
-            path
+            path,
+            null
+        );
+    }
+    
+    public static ErrorResponseDto of(int status, String error, String message, String path, String errorCode) {
+        return new ErrorResponseDto(
+            LocalDateTime.now(),
+            status,
+            error,
+            message,
+            path,
+            errorCode
         );
     }
 }

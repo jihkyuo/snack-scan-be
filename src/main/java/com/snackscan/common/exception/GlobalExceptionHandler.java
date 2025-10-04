@@ -1,4 +1,4 @@
-package com.snackscan.exception;
+package com.snackscan.common.exception;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -8,34 +8,24 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
-import com.snackscan.dto.response.ErrorResponseDto;
+import com.snackscan.common.dto.ErrorResponseDto;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // 커스텀 예외 처리
-    @ExceptionHandler(MemberNotFoundException.class)
-    public ResponseEntity<ErrorResponseDto> handleMemberNotFoundException(
-            MemberNotFoundException ex, WebRequest request) {
+    // 비즈니스 예외 처리
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ErrorResponseDto> handleBusinessException(
+            BusinessException ex, WebRequest request) {
+        ErrorCode errorCode = ex.getErrorCode();
         ErrorResponseDto errorResponse = ErrorResponseDto.of(
-            HttpStatus.NOT_FOUND.value(),
-            "Member Not Found",
+            errorCode.getHttpStatus().value(),
+            errorCode.getHttpStatus().getReasonPhrase(),
             ex.getMessage(),
-            request.getDescription(false).replace("uri=", "")
+            request.getDescription(false).replace("uri=", ""),
+            errorCode.getCode()
         );
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-    }
-
-    @ExceptionHandler(DuplicateMemberException.class)
-    public ResponseEntity<ErrorResponseDto> handleDuplicateMemberException(
-            DuplicateMemberException ex, WebRequest request) {
-        ErrorResponseDto errorResponse = ErrorResponseDto.of(
-            HttpStatus.CONFLICT.value(),
-            "Duplicate Member",
-            ex.getMessage(),
-            request.getDescription(false).replace("uri=", "")
-        );
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(errorResponse);
     }
 
     // 유효성 검증 실패 처리
@@ -53,7 +43,8 @@ public class GlobalExceptionHandler {
             HttpStatus.BAD_REQUEST.value(),
             "Validation Failed",
             message,
-            request.getDescription(false).replace("uri=", "")
+            request.getDescription(false).replace("uri=", ""),
+            ErrorCode.INVALID_INPUT.getCode()
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
@@ -65,7 +56,8 @@ public class GlobalExceptionHandler {
             HttpStatus.BAD_REQUEST.value(),
             "Constraint Violation",
             ex.getMessage(),
-            request.getDescription(false).replace("uri=", "")
+            request.getDescription(false).replace("uri=", ""),
+            ErrorCode.INVALID_INPUT.getCode()
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
@@ -78,7 +70,8 @@ public class GlobalExceptionHandler {
             HttpStatus.BAD_REQUEST.value(),
             "Invalid Argument",
             ex.getMessage(),
-            request.getDescription(false).replace("uri=", "")
+            request.getDescription(false).replace("uri=", ""),
+            ErrorCode.INVALID_INPUT.getCode()
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
@@ -90,7 +83,8 @@ public class GlobalExceptionHandler {
             HttpStatus.CONFLICT.value(),
             "Illegal State",
             ex.getMessage(),
-            request.getDescription(false).replace("uri=", "")
+            request.getDescription(false).replace("uri=", ""),
+            ErrorCode.INVALID_INPUT.getCode()
         );
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
@@ -103,7 +97,8 @@ public class GlobalExceptionHandler {
             HttpStatus.INTERNAL_SERVER_ERROR.value(),
             "Internal Server Error",
             "서버 내부 오류가 발생했습니다.",
-            request.getDescription(false).replace("uri=", "")
+            request.getDescription(false).replace("uri=", ""),
+            ErrorCode.INTERNAL_SERVER_ERROR.getCode()
         );
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }

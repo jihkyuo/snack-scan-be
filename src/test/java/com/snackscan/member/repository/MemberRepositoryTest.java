@@ -1,4 +1,4 @@
-package com.snackscan.repository;
+package com.snackscan.member.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.snackscan.entity.Member;
+import com.snackscan.member.entity.Member;
 
 @SpringBootTest
 @Transactional
