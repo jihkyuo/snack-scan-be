@@ -13,8 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.snackscan.store.dto.request.AddStoreDto;
+import com.snackscan.store.dto.request.AddStoreProductDto;
+import com.snackscan.store.dto.response.StoreProductResponseDto;
 import com.snackscan.store.dto.response.StoreResponseDto;
 import com.snackscan.store.entity.Store;
+import com.snackscan.store.entity.StoreProduct;
 import com.snackscan.store.service.StoreService;
 
 import jakarta.validation.Valid;
@@ -51,4 +54,24 @@ public class StoreController {
     return ResponseEntity.noContent().build();
   }
 
+  // 매장 상품 조회
+  @GetMapping("/{id}/products")
+  public ResponseEntity<List<StoreProductResponseDto>> findStoreProducts(@PathVariable Long id) {
+    List<StoreProduct> storeProducts = storeService.findStoreProducts(id);
+    return ResponseEntity.ok(storeProducts.stream()
+        .map(StoreProductResponseDto::new)
+        .toList());
+  }
+
+  // 매장 상품 등록
+  @PostMapping("/{id}/products")
+  public ResponseEntity<Long> addStoreProduct(@PathVariable Long id, @RequestBody AddStoreProductDto request) {
+    Long storeProductId = storeService.addStoreProduct(
+        id,
+        request.getProductId(),
+        request.getMinStock(),
+        request.getCurrentStock(),
+        request.getStorePrice());
+    return ResponseEntity.status(HttpStatus.CREATED).body(storeProductId);
+  }
 }
