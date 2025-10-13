@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.snackscan.common.exception.BusinessException;
 import com.snackscan.product.entity.Product;
 import com.snackscan.product.service.ProductService;
+import com.snackscan.store.dto.request.AddStoreDto;
 import com.snackscan.store.entity.Store;
 import com.snackscan.store.entity.StoreProduct;
 import com.snackscan.store.exception.StoreErrorCode;
@@ -26,7 +27,12 @@ public class StoreService {
   private final ProductService productService;
 
   // 매장 등록
-  public Long addStore(Store store) {
+  public Long addStore(AddStoreDto request) {
+    return addStore(request.getName(), request.getAddress());
+  }
+
+  public Long addStore(String name, String address) {
+    Store store = new Store(name, address);
     storeRepository.save(store);
     return store.getId();
   }

@@ -33,8 +33,7 @@ public class StoreController {
   // 매장 등록
   @PostMapping
   public ResponseEntity<Long> addStore(@Valid @RequestBody AddStoreDto request) {
-    Store store = new Store(request.getName(), request.getAddress());
-    Long storeId = storeService.addStore(store);
+    Long storeId = storeService.addStore(request);
     return ResponseEntity.status(HttpStatus.CREATED).body(storeId);
   }
 

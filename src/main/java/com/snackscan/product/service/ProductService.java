@@ -25,7 +25,15 @@ public class ProductService {
 
   // Product 생성
   public Product createProduct(String name, String brand, int productPrice) {
+    validateDuplicateProduct(name);
     Product product = Product.createProduct(name, brand, productPrice);
     return productRepository.save(product);
+  }
+
+  private void validateDuplicateProduct(String name) {
+    Product findProduct = productRepository.findByName(name);
+    if (findProduct != null) {
+      throw new BusinessException(ProductErrorCode.DUPLICATE_PRODUCT);
+    }
   }
 }
