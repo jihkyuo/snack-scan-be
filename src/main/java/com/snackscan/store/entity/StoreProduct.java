@@ -24,8 +24,13 @@ public class StoreProduct {
   @Column(name = "store_product_id")
   private Long id;
 
+  @Column(nullable = false)
   private int minStock; // 최소 재고
+
+  @Column(nullable = false)
   private int currentStock; // 현재 재고
+
+  @Column(nullable = false)
   private int storePrice; // 매장 가격
 
   @ManyToOne(fetch = FetchType.LAZY)

@@ -18,8 +18,10 @@ public class Store {
   @Column(name = "store_id")
   private Long id;
 
+  @Column(nullable = false, length = 100)
   private String name;
 
+  @Column(nullable = false, length = 100)
   private String address;
 
   public Store(String name, String address) {

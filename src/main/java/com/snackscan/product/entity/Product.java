@@ -18,10 +18,13 @@ public class Product {
   @Column(name = "product_id")
   private Long id;
 
+  @Column(unique = true, nullable = false, length = 100)
   private String name; // 상품 이름
 
+  @Column(length = 50)
   private String brand; // 브랜드
 
+  @Column(nullable = false)
   private int productPrice; // 상품 가격
 
   public static Product createProduct(String name, String brand, int productPrice) {

@@ -38,6 +38,7 @@ public class StoreService {
   }
 
   // 매장 전체 조회
+  @Transactional(readOnly = true)
   public List<Store> findAllStores() {
     return storeRepository.findAll();
   }
@@ -49,12 +50,14 @@ public class StoreService {
   }
 
   // 매장 ID로 조회, 없으면 예외 발생
+  @Transactional(readOnly = true)
   public Store findStoreByIdOrThrow(Long storeId) {
     return storeRepository.findById(storeId)
         .orElseThrow(() -> new BusinessException(StoreErrorCode.STORE_NOT_FOUND));
   }
 
   // 매장 상품 조회
+  @Transactional(readOnly = true)
   public List<StoreProduct> findStoreProducts(Long storeId) {
     return storeProductRepository.findByStoreId(storeId);
   }
@@ -82,6 +85,7 @@ public class StoreService {
   }
 
   // 매장 상품 단일 조회
+  @Transactional(readOnly = true)
   public StoreProduct findStoreProductByIdOrThrow(Long storeProductId) {
     return storeProductRepository.findById(storeProductId)
         .orElseThrow(() -> new BusinessException(StoreErrorCode.STORE_PRODUCT_NOT_FOUND));
