@@ -1,6 +1,9 @@
 package com.snackscan.member.dto.request;
 
+import com.snackscan.member.entity.Role;
+
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -16,4 +19,7 @@ public class MemberJoinDto {
   @NotBlank(message = "전화번호는 필수입니다")
   @Size(min = 11, max = 13, message = "전화번호는 11-13자 사이여야 합니다")
   private String phoneNumber;
+
+  @NotNull(message = "역할은 필수입니다")
+  private Role role;
 }

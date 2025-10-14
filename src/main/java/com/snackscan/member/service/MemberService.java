@@ -58,7 +58,7 @@ public class MemberService {
   }
 
   // 회원 ID로 조회, 없으면 예외 발생
-  private Member findByIdOrThrow(Long memberId) {
+  public Member findByIdOrThrow(Long memberId) {
     return memberRepository.findById(memberId)
         .orElseThrow(() -> new BusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
   }

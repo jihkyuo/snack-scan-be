@@ -4,8 +4,6 @@ import com.snackscan.store.entity.Store;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -39,37 +37,17 @@ public class MemberStoreRole {
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Role role;
-
     // 생성자
-    public MemberStoreRole(Member member, Store store, Role role) {
+    private MemberStoreRole(Member member, Store store) {
         this.member = member;
         this.store = store;
-        this.role = role;
     }
 
     // 정적 팩토리 메서드
-    public static MemberStoreRole createOwnerRole(Member member, Store store) {
-        return new MemberStoreRole(member, store, Role.OWNER);
-    }
-
-    public static MemberStoreRole createEmployeeRole(Member member, Store store) {
-        return new MemberStoreRole(member, store, Role.EMPLOYEE);
-    }
-
-    // 역할 변경 메서드
-    public void changeRole(Role newRole) {
-        this.role = newRole;
-    }
-
-    // 역할 확인 메서드
-    public boolean isOwner() {
-        return this.role == Role.OWNER;
-    }
-
-    public boolean isEmployee() {
-        return this.role == Role.EMPLOYEE;
+    public static MemberStoreRole createMemberStoreRelation(Member member, Store store) {
+        MemberStoreRole memberStoreRole = new MemberStoreRole(member, store);
+        member.addStoreRole(memberStoreRole);
+        store.addMember(memberStoreRole);
+        return memberStoreRole;
     }
 }

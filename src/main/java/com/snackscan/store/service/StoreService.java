@@ -6,6 +6,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.snackscan.common.exception.BusinessException;
+import com.snackscan.member.entity.Member;
+import com.snackscan.member.entity.MemberStoreRole;
+import com.snackscan.member.repository.MemberStoreRoleRepository;
+import com.snackscan.member.service.MemberService;
 import com.snackscan.product.entity.Product;
 import com.snackscan.product.service.ProductService;
 import com.snackscan.store.dto.request.AddStoreDto;
@@ -25,15 +29,27 @@ public class StoreService {
   private final StoreRepository storeRepository;
   private final StoreProductRepository storeProductRepository;
   private final ProductService productService;
+  private final MemberStoreRoleRepository memberStoreRoleRepository;
+  private final MemberService memberService;
 
   // 매장 등록
   public Long addStore(AddStoreDto request) {
-    return addStore(request.getName(), request.getAddress());
+    return addStore(request.getName(), request.getAddress(), request.getMemberId());
   }
 
-  public Long addStore(String name, String address) {
-    Store store = new Store(name, address);
+  public Long addStore(String name, String address, Long memberId) {
+    Member member = memberService.findByIdOrThrow(memberId);
+
+    // 스토어 생성 및 저장
+    Store store = Store.createStore(name, address);
     storeRepository.save(store);
+
+    // 멤버-스토어 관계 생성 및 저장
+    MemberStoreRole memberStoreRole = MemberStoreRole.createMemberStoreRelation(member, store);
+
+    // 관계 저장
+    memberStoreRoleRepository.save(memberStoreRole);
+
     return store.getId();
   }
 

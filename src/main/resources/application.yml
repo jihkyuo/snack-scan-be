@@ -10,7 +10,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     database-platform: org.hibernate.dialect.MariaDBDialect
     properties:
       hibernate:
@@ -18,6 +18,13 @@ spring:
         use_sql_comments: true
         highlight_sql: true
         dialect: org.hibernate.dialect.MariaDBDialect
+        hbm2ddl:
+          auto: update
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+        show_sql: true
 
 logging.level:
   org.hibernate.SQL: debug

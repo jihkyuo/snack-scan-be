@@ -9,6 +9,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.snackscan.member.entity.Member;
+import com.snackscan.member.entity.Role;
 
 @SpringBootTest
 @Transactional
@@ -20,7 +21,7 @@ public class MemberRepositoryTest {
 
   @Test
   public void findByPhoneNumber() {
-    Member member = new Member("test1234", "John Doe", "01012345678");
+    Member member = new Member("test1234", "John Doe", "01012345678", Role.OWNER);
     Member savedMember = memberRepository.save(member);
     Member foundMember = memberRepository.findByPhoneNumber("01012345678");
 

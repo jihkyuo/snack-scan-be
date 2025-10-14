@@ -31,6 +31,7 @@ public class StoreController {
   private final StoreService storeService;
 
   // 매장 등록
+  // todo 추후 로그인한 토큰으로 사용자 식별
   @PostMapping
   public ResponseEntity<Long> addStore(@Valid @RequestBody AddStoreDto request) {
     Long storeId = storeService.addStore(request);

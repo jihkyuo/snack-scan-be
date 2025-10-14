@@ -1,6 +1,7 @@
 package com.snackscan.store.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
@@ -11,4 +12,6 @@ public class AddStoreDto {
   @NotBlank(message = "매장 주소는 필수입니다")
   private String address;
 
+  @NotNull(message = "멤버 ID는 필수입니다")
+  private Long memberId;
 }

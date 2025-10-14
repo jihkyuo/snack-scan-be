@@ -5,6 +5,8 @@ import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -32,13 +34,18 @@ public class Member {
   @Column(nullable = false, length = 20)
   private String phoneNumber;
 
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private Role role;
+
   @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
   private List<MemberStoreRole> memberStoreRoles = new ArrayList<>();
 
-  public Member(String loginId, String name, String phoneNumber) {
+  public Member(String loginId, String name, String phoneNumber, Role role) {
     this.loginId = loginId;
     this.name = name;
     this.phoneNumber = phoneNumber;
+    this.role = role;
   }
 
   // 정보 수정 메서드
@@ -51,35 +58,22 @@ public class Member {
     }
   }
 
+  // 역할 관련 메서드들
+  public boolean isOwner() {
+    return this.role == Role.OWNER;
+  }
+
+  public boolean isEmployee() {
+    return this.role == Role.EMPLOYEE;
+  }
+
+  public void changeRole(Role newRole) {
+    this.role = newRole;
+  }
+
   // 스토어 관련 메서드들
   public void addStoreRole(MemberStoreRole memberStoreRole) {
     this.memberStoreRoles.add(memberStoreRole);
   }
 
-  public void removeStoreRole(MemberStoreRole memberStoreRole) {
-    this.memberStoreRoles.remove(memberStoreRole);
-  }
-
-  // 특정 스토어에서의 역할 조회
-  public Role getRoleInStore(Long storeId) {
-    return memberStoreRoles.stream()
-        .filter(role -> role.getStore().getId().equals(storeId))
-        .map(MemberStoreRole::getRole)
-        .findFirst()
-        .orElse(null);
-  }
-
-  // 소유한 스토어 목록 조회
-  public List<MemberStoreRole> getOwnedStores() {
-    return memberStoreRoles.stream()
-        .filter(MemberStoreRole::isOwner)
-        .toList();
-  }
-
-  // 근무하는 스토어 목록 조회
-  public List<MemberStoreRole> getWorkingStores() {
-    return memberStoreRoles.stream()
-        .filter(MemberStoreRole::isEmployee)
-        .toList();
-  }
 }
