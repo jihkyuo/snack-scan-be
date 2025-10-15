@@ -115,6 +115,40 @@ public class StoreService {
     if (ownerRoles.isEmpty()) {
       throw new BusinessException(StoreErrorCode.STORE_OWNER_NOT_FOUND);
     }
+
+    if (ownerRoles.size() > 1) {
+      throw new BusinessException(StoreErrorCode.STORE_OWNER_NOT_UNIQUE);
+    }
+
     return ownerRoles.get(0).getMember();
+  }
+
+  // 매장 직원 추가
+  public void addStoreEmployee(Long storeId, List<Long> memberIds) {
+    Store store = findStoreByIdOrThrow(storeId);
+
+    // 모든 멤버를 한 번에 조회
+    List<Member> members = memberService.findByIds(memberIds);
+    if (members.size() != memberIds.size()) {
+      throw new BusinessException(StoreErrorCode.MEMBER_NOT_FOUND);
+    }
+
+    // 모든 중복 체크
+    if (memberStoreRoleRepository.hasExistingMembers(memberIds, storeId)) {
+      throw new BusinessException(StoreErrorCode.MEMBER_ALREADY_IN_STORE);
+    }
+
+    List<MemberStoreRole> memberStoreRoles = members.stream()
+        .map(member -> MemberStoreRole.createMemberStoreRelation(member, store, Role.EMPLOYEE))
+        .toList();
+
+    // 배치로 한 번에 저장
+    memberStoreRoleRepository.saveAll(memberStoreRoles);
+  }
+
+  // 매장 직원 조회
+  @Transactional(readOnly = true)
+  public List<MemberStoreRole> findStoreEmployees(Long storeId) {
+    return memberStoreRoleRepository.findByStoreIdAndStoreRole(storeId, Role.EMPLOYEE);
   }
 }

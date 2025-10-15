@@ -38,4 +38,8 @@ public interface MemberStoreRoleRepository extends JpaRepository<MemberStoreRole
 
   // 특정 스토어의 특정 역할 멤버들 조회
   List<MemberStoreRole> findByStoreIdAndStoreRole(Long storeId, Role storeRole);
+
+  // 여러 멤버가 특정 스토어에 소속되어 있는지 확인 (성능 최적화)
+  @Query("SELECT COUNT(msr) > 0 FROM MemberStoreRole msr WHERE msr.member.id IN :memberIds AND msr.store.id = :storeId")
+  boolean hasExistingMembers(@Param("memberIds") List<Long> memberIds, @Param("storeId") Long storeId);
 }

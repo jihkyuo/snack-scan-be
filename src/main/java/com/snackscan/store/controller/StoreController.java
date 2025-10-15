@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.snackscan.store.dto.request.AddStoreDto;
+import com.snackscan.store.dto.request.AddStoreEmployeeDto;
 import com.snackscan.store.dto.request.AddStoreProductDto;
 import com.snackscan.store.dto.response.StoreProductResponseDto;
 import com.snackscan.store.dto.response.StoreResponseDto;
@@ -73,5 +74,12 @@ public class StoreController {
         request.getCurrentStock(),
         request.getStorePrice());
     return ResponseEntity.status(HttpStatus.CREATED).body(storeProductId);
+  }
+
+  // 매장 직원 추가
+  @PostMapping("/employees")
+  public ResponseEntity<Void> addStoreEmployee(@Valid @RequestBody AddStoreEmployeeDto request) {
+    storeService.addStoreEmployee(request.getStoreId(), request.getMemberIds());
+    return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 }

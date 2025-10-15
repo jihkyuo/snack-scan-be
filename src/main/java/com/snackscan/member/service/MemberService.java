@@ -62,4 +62,9 @@ public class MemberService {
     return memberRepository.findById(memberId)
         .orElseThrow(() -> new BusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
   }
+
+  // 여러 회원 ID로 조회
+  public List<Member> findByIds(List<Long> memberIds) {
+    return memberRepository.findAllById(memberIds);
+  }
 }
