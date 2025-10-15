@@ -32,7 +32,7 @@ public class MemberController {
   // 회원 가입
   @PostMapping
   public ResponseEntity<Long> join(@Valid @RequestBody MemberJoinDto request) {
-    Member member = new Member(request.getLoginId(), request.getName(), request.getPhoneNumber(), request.getRole());
+    Member member = new Member(request.getLoginId(), request.getName(), request.getPhoneNumber());
     Long memberId = memberService.join(member);
     return ResponseEntity.status(HttpStatus.CREATED).body(memberId);
   }

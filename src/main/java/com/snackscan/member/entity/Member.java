@@ -5,8 +5,6 @@ import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -34,18 +32,13 @@ public class Member {
   @Column(nullable = false, length = 20)
   private String phoneNumber;
 
-  @Enumerated(EnumType.STRING)
-  @Column(nullable = false)
-  private Role role;
-
   @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
   private List<MemberStoreRole> memberStoreRoles = new ArrayList<>();
 
-  public Member(String loginId, String name, String phoneNumber, Role role) {
+  public Member(String loginId, String name, String phoneNumber) {
     this.loginId = loginId;
     this.name = name;
     this.phoneNumber = phoneNumber;
-    this.role = role;
   }
 
   // 정보 수정 메서드
@@ -58,21 +51,8 @@ public class Member {
     }
   }
 
-  // 역할 관련 메서드들
-  public boolean isOwner() {
-    return this.role == Role.OWNER;
-  }
-
-  public boolean isEmployee() {
-    return this.role == Role.EMPLOYEE;
-  }
-
-  public void changeRole(Role newRole) {
-    this.role = newRole;
-  }
-
   // 스토어 관련 메서드들
-  public void addStoreRole(MemberStoreRole memberStoreRole) {
+  public void addMemberStoreRole(MemberStoreRole memberStoreRole) {
     this.memberStoreRoles.add(memberStoreRole);
   }
 

@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.snackscan.common.exception.BusinessException;
 import com.snackscan.member.dto.request.MemberUpdateDto;
 import com.snackscan.member.entity.Member;
-import com.snackscan.member.entity.Role;
 import com.snackscan.member.repository.MemberRepository;
 
 @SpringBootTest
@@ -27,7 +26,7 @@ public class MemberServiceTest {
   @Test
   void 회원가입() {
     // given
-    Member member = new Member("jio", "지오현", "01012345678", Role.OWNER);
+    Member member = new Member("jio", "지오현", "01012345678");
 
     // when
     memberService.join(member);
@@ -42,8 +41,8 @@ public class MemberServiceTest {
   @Test
   void 중복_회원_예외() throws Exception {
     // given
-    Member member1 = new Member("jio", "지오현", "01012345678", Role.OWNER);
-    Member member2 = new Member("jio", "지오현", "01012345678", Role.OWNER);
+    Member member1 = new Member("jio", "지오현", "01012345678");
+    Member member2 = new Member("jio", "지오현", "01012345678");
 
     // when
     memberService.join(member1);
@@ -57,7 +56,7 @@ public class MemberServiceTest {
   @Test
   void 회원_정보_수정() {
     // given
-    Member member = new Member("jio", "지오현", "01012345678", Role.OWNER);
+    Member member = new Member("jio", "지오현", "01012345678");
     memberService.join(member);
 
     // when
@@ -75,7 +74,7 @@ public class MemberServiceTest {
   @Test
   void 회원_정보_부분_수정_이름만() {
     // given
-    Member member = new Member("jio", "지오현", "01012345678", Role.OWNER);
+    Member member = new Member("jio", "지오현", "01012345678");
     memberService.join(member);
 
     // when
@@ -93,7 +92,7 @@ public class MemberServiceTest {
   @Test
   void 회원_정보_부분_수정_전화번호만() {
     // given
-    Member member = new Member("jio", "지오현", "01012345678", Role.OWNER);
+    Member member = new Member("jio", "지오현", "01012345678");
     memberService.join(member);
 
     // when
@@ -111,7 +110,7 @@ public class MemberServiceTest {
   @Test
   void 회원_정보_수정_빈_문자열_무시() {
     // given
-    Member member = new Member("jio", "지오현", "01012345678", Role.OWNER);
+    Member member = new Member("jio", "지오현", "01012345678");
     memberService.join(member);
 
     // when

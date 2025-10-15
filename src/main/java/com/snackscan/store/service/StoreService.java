@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.snackscan.common.exception.BusinessException;
 import com.snackscan.member.entity.Member;
 import com.snackscan.member.entity.MemberStoreRole;
+import com.snackscan.member.entity.Role;
 import com.snackscan.member.repository.MemberStoreRoleRepository;
 import com.snackscan.member.service.MemberService;
 import com.snackscan.product.entity.Product;
@@ -44,8 +45,8 @@ public class StoreService {
     Store store = Store.createStore(name, address);
     storeRepository.save(store);
 
-    // 멤버-스토어 관계 생성 및 저장
-    MemberStoreRole memberStoreRole = MemberStoreRole.createMemberStoreRelation(member, store);
+    // 멤버-스토어 관계 생성 및 저장 (스토어 생성자는 자동으로 OWNER 역할)
+    MemberStoreRole memberStoreRole = MemberStoreRole.createMemberStoreRelation(member, store, Role.OWNER);
 
     // 관계 저장
     memberStoreRoleRepository.save(memberStoreRole);
@@ -105,5 +106,15 @@ public class StoreService {
   public StoreProduct findStoreProductByIdOrThrow(Long storeProductId) {
     return storeProductRepository.findById(storeProductId)
         .orElseThrow(() -> new BusinessException(StoreErrorCode.STORE_PRODUCT_NOT_FOUND));
+  }
+
+  // 매장 오너 조회
+  @Transactional(readOnly = true)
+  public Member findStoreOwner(Long storeId) {
+    List<MemberStoreRole> ownerRoles = memberStoreRoleRepository.findByStoreIdAndStoreRole(storeId, Role.OWNER);
+    if (ownerRoles.isEmpty()) {
+      throw new BusinessException(StoreErrorCode.STORE_OWNER_NOT_FOUND);
+    }
+    return ownerRoles.get(0).getMember();
   }
 }

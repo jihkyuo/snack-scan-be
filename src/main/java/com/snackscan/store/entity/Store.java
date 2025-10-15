@@ -56,14 +56,14 @@ public class Store {
   // 스토어 소유자 조회 (사장 역할인 멤버들)
   public List<MemberStoreRole> getOwners() {
     return memberStoreRoles.stream()
-        .filter(role -> role.getMember().isOwner())
+        .filter(MemberStoreRole::isOwner)
         .toList();
   }
 
   // 스토어 직원 조회 (직원 역할인 멤버들)
   public List<MemberStoreRole> getEmployees() {
     return memberStoreRoles.stream()
-        .filter(role -> role.getMember().isEmployee())
+        .filter(MemberStoreRole::isEmployee)
         .toList();
   }
 
