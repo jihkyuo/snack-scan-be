@@ -1,5 +1,8 @@
 package com.snackscan.product.service;
 
+import java.util.List;
+import java.util.Set;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,9 +21,16 @@ public class ProductService {
   private final ProductRepository productRepository;
 
   // Product ID로 조회, 없으면 예외 발생
+  @Transactional(readOnly = true)
   public Product findProductByIdOrThrow(Long productId) {
     return productRepository.findById(productId)
         .orElseThrow(() -> new BusinessException(ProductErrorCode.PRODUCT_NOT_FOUND));
+  }
+
+  // Product ID 목록으로 일괄 조회
+  @Transactional(readOnly = true)
+  public List<Product> findProductsByIds(Set<Long> productIds) {
+    return productRepository.findAllById(productIds);
   }
 
   // Product 생성

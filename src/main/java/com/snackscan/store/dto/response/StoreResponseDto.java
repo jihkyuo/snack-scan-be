@@ -5,7 +5,6 @@ import com.snackscan.store.entity.Store;
 import lombok.Data;
 
 @Data
-
 public class StoreResponseDto {
 
   private Long id;
