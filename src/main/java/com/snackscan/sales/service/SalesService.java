@@ -57,7 +57,12 @@ public class SalesService {
     // 1. 매장 조회
     Store store = storeService.findStoreByIdOrThrow(request.getStoreId());
     
-    // 2. 모든 Product ID를 수집
+    // 2. 매출 목록 검증
+    if (request.getSalesList() == null || request.getSalesList().isEmpty()) {
+      throw new BusinessException(SalesErrorCode.SALES_LIST_EMPTY);
+    }
+    
+    // 3. 모든 Product ID를 수집
     Set<Long> productIds = request.getSalesList().stream()
         .map(SalesItemDto::getProductId)
         .collect(Collectors.toSet());
