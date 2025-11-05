@@ -68,13 +68,10 @@ public class StoreController {
 
   // 매장 상품 등록
   @PostMapping("/{id}/products")
-  public ResponseEntity<Long> addStoreProduct(@PathVariable Long id, @RequestBody AddStoreProductDto request) {
-    Long storeProductId = storeService.addStoreProduct(
-        id,
-        request.getProductId(),
-        request.getMinStock(),
-        request.getCurrentStock(),
-        request.getStorePrice());
+  public ResponseEntity<Long> addStoreProduct(
+      @PathVariable Long id,
+      @Valid @RequestBody AddStoreProductDto request) {
+    Long storeProductId = storeService.addStoreProduct(id, request);
     return ResponseEntity.status(HttpStatus.CREATED).body(storeProductId);
   }
 

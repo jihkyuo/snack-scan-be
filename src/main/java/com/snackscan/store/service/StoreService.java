@@ -14,6 +14,7 @@ import com.snackscan.member.service.MemberService;
 import com.snackscan.product.entity.Product;
 import com.snackscan.product.service.ProductService;
 import com.snackscan.store.dto.request.AddStoreDto;
+import com.snackscan.store.dto.request.AddStoreProductDto;
 import com.snackscan.store.entity.Store;
 import com.snackscan.store.entity.StoreProduct;
 import com.snackscan.store.exception.StoreErrorCode;
@@ -80,16 +81,35 @@ public class StoreService {
   }
 
   // 매장 상품 등록 (Product 자동 생성 포함)
-  public Long addStoreProduct(Long storeId, Long productId, int minStock, int currentStock,
-      int storePrice) {
+  public Long addStoreProduct(Long storeId, AddStoreProductDto request) {
+    // 입력 유효성 검증
+    if (!request.isValid()) {
+      throw new BusinessException(StoreErrorCode.INVALID_PRODUCT_INPUT);
+    }
+
     // Store 조회
     Store store = findStoreByIdOrThrow(storeId);
 
-    // Product 처리
-    Product product = productService.findProductByIdOrThrow(productId);
+    // Product 처리: productId가 있으면 기존 Product 사용, 없으면 새로 생성
+    Product product;
+    if (request.hasProductId()) {
+      // 기존 Product 사용
+      product = productService.findProductByIdOrThrow(request.getProductId());
+    } else {
+      // 새 Product 생성
+      product = productService.createProduct(
+          request.getProductName(),
+          request.getProductBrand(),
+          request.getProductPrice());
+    }
 
     // StoreProduct 생성 및 저장
-    StoreProduct storeProduct = StoreProduct.createStoreProduct(minStock, currentStock, storePrice, product, store);
+    StoreProduct storeProduct = StoreProduct.createStoreProduct(
+        request.getMinStock(),
+        request.getCurrentStock(),
+        request.getStorePrice(),
+        product,
+        store);
 
     storeProductRepository.save(storeProduct);
     return storeProduct.getId();
