@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.snackscan.member.entity.MemberStoreRole;
 import com.snackscan.store.dto.request.AddStoreDto;
 import com.snackscan.store.dto.request.AddStoreEmployeeDto;
 import com.snackscan.store.dto.request.AddStoreProductDto;
+import com.snackscan.store.dto.response.StoreEmployeeResponseDto;
 import com.snackscan.store.dto.response.StoreProductResponseDto;
 import com.snackscan.store.dto.response.StoreResponseDto;
 import com.snackscan.store.entity.Store;
@@ -76,10 +78,19 @@ public class StoreController {
     return ResponseEntity.status(HttpStatus.CREATED).body(storeProductId);
   }
 
+  // 매장 직원 조회
+  @GetMapping("/{id}/employees")
+  public ResponseEntity<List<StoreEmployeeResponseDto>> findStoreEmployees(@PathVariable Long id) {
+    List<MemberStoreRole> storeEmployees = storeService.findStoreEmployees(id);
+    return ResponseEntity.ok(storeEmployees.stream()
+        .map(StoreEmployeeResponseDto::new)
+        .toList());
+  }
+
   // 매장 직원 추가
-  @PostMapping("/employees")
-  public ResponseEntity<Void> addStoreEmployee(@Valid @RequestBody AddStoreEmployeeDto request) {
-    storeService.addStoreEmployee(request.getStoreId(), request.getMemberIds());
+  @PostMapping("/{id}/employees")
+  public ResponseEntity<Void> addStoreEmployee(@PathVariable Long id, @Valid @RequestBody AddStoreEmployeeDto request) {
+    storeService.addStoreEmployee(id, request.getMemberIds());
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 }
