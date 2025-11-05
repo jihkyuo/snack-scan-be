@@ -34,11 +34,11 @@ public class StoreProduct {
   private int storePrice; // 매장 가격
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "product_id")
+  @JoinColumn(name = "product_id", nullable = false)
   private Product product;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "store_id")
+  @JoinColumn(name = "store_id", nullable = false)
   private Store store;
 
   // == 비즈니스 메서드 ==//

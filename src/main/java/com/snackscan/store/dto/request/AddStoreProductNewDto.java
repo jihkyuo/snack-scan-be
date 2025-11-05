@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class AddStoreProductDto {
+public class AddStoreProductNewDto {
   @NotNull(message = "최소 재고는 필수입니다")
   private int minStock;
 
@@ -17,5 +17,11 @@ public class AddStoreProductDto {
   private int storePrice;
 
   @NotNull(message = "상품 ID는 필수입니다")
-  private Long productId;
+  private String productName;
+
+  @NotNull(message = "상품 브랜드는 필수입니다")
+  private String productBrand;
+
+  @NotNull(message = "상품 가격은 필수입니다")
+  private int productPrice;
 }

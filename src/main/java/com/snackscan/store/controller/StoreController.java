@@ -16,6 +16,7 @@ import com.snackscan.member.entity.MemberStoreRole;
 import com.snackscan.store.dto.request.AddStoreDto;
 import com.snackscan.store.dto.request.AddStoreEmployeeDto;
 import com.snackscan.store.dto.request.AddStoreProductDto;
+import com.snackscan.store.dto.request.AddStoreProductNewDto;
 import com.snackscan.store.dto.response.StoreEmployeeResponseDto;
 import com.snackscan.store.dto.response.StoreProductResponseDto;
 import com.snackscan.store.dto.response.StoreResponseDto;
@@ -66,12 +67,21 @@ public class StoreController {
         .toList());
   }
 
-  // 매장 상품 등록
+  // 매장 상품 등록(기존 상품 사용)
   @PostMapping("/{id}/products")
   public ResponseEntity<Long> addStoreProduct(
       @PathVariable Long id,
       @Valid @RequestBody AddStoreProductDto request) {
     Long storeProductId = storeService.addStoreProduct(id, request);
+    return ResponseEntity.status(HttpStatus.CREATED).body(storeProductId);
+  }
+
+  // 매장 상품 등록(새 상품 생성)
+  @PostMapping("/{id}/products/new")
+  public ResponseEntity<Long> addStoreProductNew(
+      @PathVariable Long id,
+      @Valid @RequestBody AddStoreProductNewDto request) {
+    Long storeProductId = storeService.addStoreProductNew(id, request);
     return ResponseEntity.status(HttpStatus.CREATED).body(storeProductId);
   }
 

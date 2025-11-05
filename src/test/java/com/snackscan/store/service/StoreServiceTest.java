@@ -17,6 +17,8 @@ import com.snackscan.member.service.MemberService;
 import com.snackscan.product.entity.Product;
 import com.snackscan.product.service.ProductService;
 import com.snackscan.store.dto.request.AddStoreDto;
+import com.snackscan.store.dto.request.AddStoreProductDto;
+import com.snackscan.store.dto.request.AddStoreProductNewDto;
 import com.snackscan.store.entity.Store;
 import com.snackscan.store.entity.StoreProduct;
 
@@ -50,20 +52,24 @@ public class StoreServiceTest {
   }
 
   @Test
-  void 매장_상품_등록() {
+  void 매장_상품_등록_기존_상품_사용() {
     // given
     Long storeId = createStore();
 
     // 상품 등록
     Product product = productService.createProduct("짱구", "농심", 1000);
 
+    AddStoreProductDto request = AddStoreProductDto.builder()
+        .productId(product.getId())
+        .minStock(10)
+        .currentStock(10)
+        .storePrice(1000)
+        .build();
+
     // when
     Long storeProductId = storeService.addStoreProduct(
         storeId,
-        product.getId(),
-        10,
-        10,
-        1000);
+        request);
 
     // then
     StoreProduct storeProduct = storeService.findStoreProductByIdOrThrow(storeProductId);
@@ -71,6 +77,37 @@ public class StoreServiceTest {
     assertThat(storeProduct.getMinStock()).isEqualTo(10);
     assertThat(storeProduct.getCurrentStock()).isEqualTo(10);
     assertThat(storeProduct.getStorePrice()).isEqualTo(1000);
+  }
+
+  @Test
+  void 매장_상품_등록_신규_상품_사용() {
+    // given
+    Long storeId = createStore();
+
+    // 상품 등록
+    AddStoreProductNewDto request = AddStoreProductNewDto.builder()
+        .productName("짱구")
+        .productBrand("농심")
+        .productPrice(1000)
+        .minStock(10)
+        .currentStock(10)
+        .storePrice(1000)
+        .build();
+
+    // when
+    Long storeProductId = storeService.addStoreProductNew(
+        storeId,
+        request);
+
+    // then
+    StoreProduct storeProduct = storeService.findStoreProductByIdOrThrow(storeProductId);
+    assertThat(storeProduct.getId()).isEqualTo(storeProductId);
+    assertThat(storeProduct.getMinStock()).isEqualTo(10);
+    assertThat(storeProduct.getCurrentStock()).isEqualTo(10);
+    assertThat(storeProduct.getStorePrice()).isEqualTo(1000);
+    assertThat(storeProduct.getProduct().getName()).isEqualTo("짱구");
+    assertThat(storeProduct.getProduct().getBrand()).isEqualTo("농심");
+    assertThat(storeProduct.getProduct().getProductPrice()).isEqualTo(1000);
   }
 
   @Test
