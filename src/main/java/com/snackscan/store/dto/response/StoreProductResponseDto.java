@@ -3,6 +3,9 @@ package com.snackscan.store.dto.response;
 import com.snackscan.product.entity.Product;
 import com.snackscan.store.entity.StoreProduct;
 
+import lombok.Getter;
+
+@Getter
 public class StoreProductResponseDto {
 
   private Long id;
