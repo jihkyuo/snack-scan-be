@@ -65,7 +65,7 @@ public class SalesServiceTest {
       TestData testData = testDataBuilder.build();
       SalesUploadRequestDto request = new SalesUploadRequestDto();
       request.setStoreId(testData.storeId);
-      request.setProductId(testData.productId);
+      request.setProductName(testData.productName);
       request.setQuantity(10);
       request.setUnitPrice(1000);
 
@@ -75,7 +75,7 @@ public class SalesServiceTest {
       // then
       Sales sales = salesService.findSalesByIdOrThrow(salesId);
       assertThat(sales.getStore().getId()).isEqualTo(testData.storeId);
-      assertThat(sales.getProduct().getId()).isEqualTo(testData.productId);
+      assertThat(sales.getProduct().getName()).isEqualTo(testData.productName);
       assertThat(sales.getQuantity()).isEqualTo(10);
       assertThat(sales.getUnitPrice()).isEqualTo(1000);
     }
@@ -87,7 +87,7 @@ public class SalesServiceTest {
       TestData testData = testDataBuilder.build();
       SalesUploadRequestDto request = new SalesUploadRequestDto();
       request.setStoreId(999L); // 존재하지 않는 매장 ID
-      request.setProductId(testData.productId);
+      request.setProductName(testData.productName);
       request.setQuantity(10);
       request.setUnitPrice(1000);
 
@@ -103,7 +103,7 @@ public class SalesServiceTest {
       TestData testData = testDataBuilder.build();
       SalesUploadRequestDto request = new SalesUploadRequestDto();
       request.setStoreId(testData.storeId);
-      request.setProductId(999L); // 존재하지 않는 상품 ID
+      request.setProductName("존재하지 않는 상품"); // 존재하지 않는 상품 Name
       request.setQuantity(10);
       request.setUnitPrice(1000);
 
@@ -124,13 +124,13 @@ public class SalesServiceTest {
       TestData testData = testDataBuilder.build();
       
       SalesItemDto salesItem1 = SalesItemDto.builder()
-          .productId(testData.productId)
+          .productName(testData.productName)
           .quantity(10)
           .unitPrice(1000)
           .build();
       
       SalesItemDto salesItem2 = SalesItemDto.builder()
-          .productId(testData.productId)
+          .productName(testData.productName)
           .quantity(20)
           .unitPrice(2000)
           .build();
@@ -150,7 +150,7 @@ public class SalesServiceTest {
       // 각 매출 항목 검증
       assertThat(createdSales).allSatisfy(sales -> {
         assertThat(sales.getStore().getId()).isEqualTo(testData.storeId);
-        assertThat(sales.getProduct().getId()).isEqualTo(testData.productId);
+        assertThat(sales.getProduct().getName()).isEqualTo(testData.productName);
       });
       
       // 수량별 검증
@@ -190,7 +190,7 @@ public class SalesServiceTest {
       TestData testData = testDataBuilder.build();
       SalesUploadRequestDto request = new SalesUploadRequestDto();
       request.setStoreId(testData.storeId);
-      request.setProductId(testData.productId);
+      request.setProductName(testData.productName);
       request.setQuantity(10);
       request.setUnitPrice(1000);
       
@@ -217,21 +217,21 @@ public class SalesServiceTest {
   // 테스트 데이터 빌더 클래스
   private class TestDataBuilder {
     private Long storeId;
-    private Long productId;
+    private String productName;
 
     TestDataBuilder() {
       // 기본 테스트 데이터 생성
       this.storeId = createStore();
-      this.productId = createProduct();
+      this.productName = createProduct();
     }
 
     TestData build() {
-      return new TestData(storeId, productId);
+      return new TestData(storeId, productName);
     }
   }
 
   // 테스트 데이터 클래스
-  private record TestData(Long storeId, Long productId) {}
+  private record TestData(Long storeId, String productName) {}
 
   // 테스트 헬퍼 메서드들
   private Member createMember(String loginId, String name, String phoneNumber) {
@@ -250,8 +250,8 @@ public class SalesServiceTest {
     return storeService.addStore(request);
   }
 
-  private Long createProduct() {
+  private String createProduct() {
     Product product = productService.createProduct("테스트상품", "테스트브랜드", 1000);
-    return product.getId();
+    return product.getName();
   }
 }

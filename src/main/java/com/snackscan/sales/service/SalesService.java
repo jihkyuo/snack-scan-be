@@ -38,9 +38,9 @@ public class SalesService {
   // 매출 단건 업로드
   public Long salesUpload(SalesUploadRequestDto request) {
     log.debug("매출 단건 업로드 시작 - storeId: {}, productId: {}, quantity: {}, unitPrice: {}", 
-        request.getStoreId(), request.getProductId(), request.getQuantity(), request.getUnitPrice());
+        request.getStoreId(), request.getProductName(), request.getQuantity(), request.getUnitPrice());
     Store store = storeService.findStoreByIdOrThrow(request.getStoreId());
-    Product product = productService.findProductByIdOrThrow(request.getProductId());
+    Product product = productService.findProductByNameOrThrow(request.getProductName());
     Sales sales = Sales.createSales(
         store,
         product,
@@ -73,25 +73,25 @@ public class SalesService {
       throw new BusinessException(SalesErrorCode.SALES_LIST_EMPTY);
     }
     
-    // 3. 모든 Product ID를 수집
-    Set<Long> productIds = request.getSalesList().stream()
-        .map(SalesItemDto::getProductId)
+    // 3. 모든 Product Name을 수집
+    Set<String> productNames = request.getSalesList().stream()
+        .map(SalesItemDto::getProductName)
         .collect(Collectors.toSet());
     
-    log.debug("조회할 상품 ID 수: {}", productIds.size());
+    log.debug("조회할 상품 Name 수: {}", productNames.size());
     
     // 3. 한 번에 모든 Product 조회
-    Map<Long, Product> productMap = productService.findProductsByIds(productIds)
+    Map<String, Product> productMap = productService.findProductsByNames(productNames)
         .stream()
-        .collect(Collectors.toMap(Product::getId, Function.identity()));
+        .collect(Collectors.toMap(Product::getName, Function.identity()));
     
     // 4. Sales 엔티티 생성
     List<Sales> sales = request.getSalesList().stream()
         .map(salesRequest -> {
-          Product product = productMap.get(salesRequest.getProductId());
+          Product product = productMap.get(salesRequest.getProductName());
           
           if (product == null) {
-            log.warn("상품을 찾을 수 없음 - productId: {}", salesRequest.getProductId());
+            log.warn("상품을 찾을 수 없음 - productName: {}", salesRequest.getProductName());
             throw new BusinessException(SalesErrorCode.PRODUCT_NOT_FOUND);
           }
           

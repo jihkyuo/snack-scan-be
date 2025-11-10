@@ -30,10 +30,26 @@ public class ProductService {
         .orElseThrow(() -> new BusinessException(ProductErrorCode.PRODUCT_NOT_FOUND));
   }
 
+  // Product Name으로 조회, 없으면 예외 발생
+  @Transactional(readOnly = true)
+  public Product findProductByNameOrThrow(String name) {
+    Product product = productRepository.findByName(name);
+    if (product == null) {
+      throw new BusinessException(ProductErrorCode.PRODUCT_NOT_FOUND);
+    }
+    return product;
+  }
+
   // Product ID 목록으로 일괄 조회
   @Transactional(readOnly = true)
   public List<Product> findProductsByIds(Set<Long> productIds) {
     return productRepository.findAllById(productIds);
+  }
+
+  // Product Name 목록으로 일괄 조회
+  @Transactional(readOnly = true)
+  public List<Product> findProductsByNames(Set<String> productNames) {
+    return productRepository.findAllByNameIn(productNames);
   }
 
   // Product 생성
