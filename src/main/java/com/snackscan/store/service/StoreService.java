@@ -207,4 +207,17 @@ public class StoreService {
     storeProductRepository.save(storeProduct);
     log.debug("매장 상품 수정 완료 - storeProductId: {}", storeProductId);
   }
+
+  // 매장 상품 조회
+  @Transactional(readOnly = true)
+  public StoreProduct findStoreProductByStoreIdAndProductId(Long storeId, Long productId) {
+    return storeProductRepository.findByStoreIdAndProductId(storeId, productId)
+        .orElseThrow(() -> new BusinessException(StoreErrorCode.STORE_PRODUCT_NOT_FOUND));
+  }
+
+  // 매장 상품 일괄 조회 (최적화용)
+  @Transactional(readOnly = true)
+  public List<StoreProduct> findStoreProductsByStoreIdAndProductIds(Long storeId, List<Long> productIds) {
+    return storeProductRepository.findByStoreIdAndProductIdIn(storeId, productIds);
+  }
 }

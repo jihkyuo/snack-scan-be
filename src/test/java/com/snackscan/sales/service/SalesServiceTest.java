@@ -25,6 +25,7 @@ import com.snackscan.sales.entity.Sales;
 import com.snackscan.sales.exception.SalesErrorCode;
 import com.snackscan.sales.repository.SalesRepository;
 import com.snackscan.store.dto.request.AddStoreDto;
+import com.snackscan.store.dto.request.AddStoreProductDto;
 import com.snackscan.store.service.StoreService;
 
 @SpringBootTest
@@ -218,11 +219,15 @@ public class SalesServiceTest {
   private class TestDataBuilder {
     private Long storeId;
     private String productName;
+    private Long productId;
 
     TestDataBuilder() {
       // 기본 테스트 데이터 생성
       this.storeId = createStore();
-      this.productName = createProduct();
+      this.productId = createProduct();
+      this.productName = productService.findProductByIdOrThrow(productId).getName();
+      // StoreProduct 생성 (재고 감소 기능을 위해 필요)
+      createStoreProduct(storeId, productId);
     }
 
     TestData build() {
@@ -250,8 +255,19 @@ public class SalesServiceTest {
     return storeService.addStore(request);
   }
 
-  private String createProduct() {
+  private Long createProduct() {
     Product product = productService.createProduct("테스트상품", "테스트브랜드", 1000);
-    return product.getName();
+    return product.getId();
+  }
+
+  private void createStoreProduct(Long storeId, Long productId) {
+    AddStoreProductDto request = AddStoreProductDto.builder()
+        .productId(productId)
+        .minStock(10)
+        .currentStock(100) // 충분한 재고 설정
+        .supplementStock(50)
+        .storePrice(1000)
+        .build();
+    storeService.addStoreProduct(storeId, request);
   }
 }

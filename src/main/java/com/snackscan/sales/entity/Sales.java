@@ -38,6 +38,9 @@ public class Sales {
   private int quantity;
 
   @Column(nullable = false)
+  private int stockAtSales; // 판매 시 재고
+
+  @Column(nullable = false)
   private int unitPrice; // 단가
 
   @Column(nullable = false)
@@ -47,11 +50,12 @@ public class Sales {
   private LocalDateTime saleDate; // 판매 일시
 
   // == 비즈니스 메서드 ==//
-  public static Sales createSales(Store store, Product product, int quantity, int unitPrice) {
+  public static Sales createSales(Store store, Product product, int quantity, int unitPrice, int stockAtSales) {
     Sales sales = new Sales();
     sales.store = store;
     sales.product = product;
     sales.quantity = quantity;
+    sales.stockAtSales = stockAtSales;
     sales.unitPrice = unitPrice;
     sales.totalAmount = quantity * unitPrice;
     sales.saleDate = LocalDateTime.now();

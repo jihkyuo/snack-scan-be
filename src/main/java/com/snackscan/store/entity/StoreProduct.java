@@ -1,6 +1,8 @@
 package com.snackscan.store.entity;
 
+import com.snackscan.common.exception.BusinessException;
 import com.snackscan.product.entity.Product;
+import com.snackscan.store.exception.StoreErrorCode;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -73,6 +75,14 @@ public class StoreProduct {
     if (storePrice != null) {
       this.storePrice = storePrice;
     }
+  }
+
+  // 재고 감소 메서드
+  public void decreaseStock(int quantity) {
+    if (this.currentStock < quantity) {
+      throw new BusinessException(StoreErrorCode.INSUFFICIENT_STOCK);
+    }
+    this.currentStock -= quantity;
   }
 
 }
