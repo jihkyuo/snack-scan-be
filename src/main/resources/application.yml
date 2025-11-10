@@ -26,7 +26,16 @@ spring:
         order_updates: true
         show_sql: true
 
-logging.level:
-  org.hibernate.SQL: debug
-  org.hibernate.type: trace
-  org.springframework.core.env: debug
+logging:
+  level:
+    # 애플리케이션 로거 레벨 설정
+    com.snackscan: info
+    # 프레임워크 로거 레벨 설정
+    org.hibernate.SQL: debug
+    org.hibernate.type: trace
+    org.springframework.core.env: debug
+    org.springframework.web: info
+    org.springframework.security: debug
+  # 로그 패턴 설정 (콘솔 출력만)
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"

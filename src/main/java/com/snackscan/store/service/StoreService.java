@@ -2,6 +2,8 @@ package com.snackscan.store.service;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +31,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class StoreService {
 
+  private static final Logger log = LoggerFactory.getLogger(StoreService.class);
   private final StoreRepository storeRepository;
   private final StoreProductRepository storeProductRepository;
   private final ProductService productService;
@@ -41,17 +44,20 @@ public class StoreService {
   }
 
   public Long addStore(String name, String address, Long memberId) {
+    log.debug("매장 생성 시작 - name: {}, address: {}, memberId: {}", name, address, memberId);
     Member member = memberService.findByIdOrThrow(memberId);
 
     // 스토어 생성 및 저장
     Store store = Store.createStore(name, address);
     storeRepository.save(store);
+    log.debug("매장 저장 완료 - storeId: {}", store.getId());
 
     // 멤버-스토어 관계 생성 및 저장 (스토어 생성자는 자동으로 OWNER 역할)
     MemberStoreRole memberStoreRole = MemberStoreRole.createMemberStoreRelation(member, store, Role.OWNER);
 
     // 관계 저장
     memberStoreRoleRepository.save(memberStoreRole);
+    log.debug("매장-회원 관계 저장 완료 - storeId: {}, memberId: {}, role: OWNER", store.getId(), memberId);
 
     return store.getId();
   }
@@ -64,8 +70,10 @@ public class StoreService {
 
   // 매장 삭제
   public void deleteStore(Long storeId) {
+    log.debug("매장 삭제 시작 - storeId: {}", storeId);
     Store store = findStoreByIdOrThrow(storeId);
     storeRepository.delete(store);
+    log.debug("매장 삭제 완료 - storeId: {}", storeId);
   }
 
   // 매장 ID로 조회, 없으면 예외 발생
@@ -83,6 +91,7 @@ public class StoreService {
 
   // 매장 상품 등록 (기존 Product 사용)
   public Long addStoreProduct(Long storeId, AddStoreProductDto request) {
+    log.debug("매장 상품 등록 시작 - storeId: {}, productId: {}", storeId, request.getProductId());
     // Store 조회
     Store store = findStoreByIdOrThrow(storeId);
 
@@ -99,6 +108,7 @@ public class StoreService {
         store);
 
     storeProductRepository.save(storeProduct);
+    log.debug("매장 상품 등록 완료 - storeId: {}, storeProductId: {}", storeId, storeProduct.getId());
     return storeProduct.getId();
   }
 
@@ -156,16 +166,20 @@ public class StoreService {
 
   // 매장 직원 추가
   public void addStoreEmployee(Long storeId, List<Long> memberIds) {
+    log.debug("매장 직원 추가 시작 - storeId: {}, memberIds: {}", storeId, memberIds);
     Store store = findStoreByIdOrThrow(storeId);
 
     // 모든 멤버를 한 번에 조회
     List<Member> members = memberService.findByIds(memberIds);
     if (members.size() != memberIds.size()) {
+      log.warn("일부 회원을 찾을 수 없음 - storeId: {}, 요청된 회원 수: {}, 조회된 회원 수: {}", 
+          storeId, memberIds.size(), members.size());
       throw new BusinessException(StoreErrorCode.MEMBER_NOT_FOUND);
     }
 
     // 모든 중복 체크
     if (memberStoreRoleRepository.hasExistingMembers(memberIds, storeId)) {
+      log.warn("이미 매장에 등록된 회원 존재 - storeId: {}, memberIds: {}", storeId, memberIds);
       throw new BusinessException(StoreErrorCode.MEMBER_ALREADY_IN_STORE);
     }
 
@@ -175,6 +189,7 @@ public class StoreService {
 
     // 배치로 한 번에 저장
     memberStoreRoleRepository.saveAll(memberStoreRoles);
+    log.debug("매장 직원 추가 완료 - storeId: {}, 추가된 직원 수: {}", storeId, memberStoreRoles.size());
   }
 
   // 매장 직원 조회

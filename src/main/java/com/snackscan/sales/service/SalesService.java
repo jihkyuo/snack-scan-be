@@ -6,6 +6,8 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,12 +30,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SalesService {
 
+  private static final Logger log = LoggerFactory.getLogger(SalesService.class);
   private final SalesRepository salesRepository;
   private final StoreService storeService;
   private final ProductService productService;
 
   // 매출 단건 업로드
   public Long salesUpload(SalesUploadRequestDto request) {
+    log.debug("매출 단건 업로드 시작 - storeId: {}, productId: {}, quantity: {}, unitPrice: {}", 
+        request.getStoreId(), request.getProductId(), request.getQuantity(), request.getUnitPrice());
     Store store = storeService.findStoreByIdOrThrow(request.getStoreId());
     Product product = productService.findProductByIdOrThrow(request.getProductId());
     Sales sales = Sales.createSales(
@@ -43,6 +48,7 @@ public class SalesService {
         request.getUnitPrice());
 
     salesRepository.save(sales);
+    log.debug("매출 단건 업로드 완료 - salesId: {}", sales.getId());
     return sales.getId(); 
   }
 
@@ -54,11 +60,16 @@ public class SalesService {
 
   // 매출 여러 건 업로드
   public void salesBulkUpload(SalesBulkUploadRequestDto request) {
+    log.info("매출 일괄 업로드 시작 - storeId: {}, 매출 건수: {}", 
+        request.getStoreId(), 
+        request.getSalesList() != null ? request.getSalesList().size() : 0);
+    
     // 1. 매장 조회
     Store store = storeService.findStoreByIdOrThrow(request.getStoreId());
     
     // 2. 매출 목록 검증
     if (request.getSalesList() == null || request.getSalesList().isEmpty()) {
+      log.warn("매출 목록이 비어있음 - storeId: {}", request.getStoreId());
       throw new BusinessException(SalesErrorCode.SALES_LIST_EMPTY);
     }
     
@@ -66,6 +77,8 @@ public class SalesService {
     Set<Long> productIds = request.getSalesList().stream()
         .map(SalesItemDto::getProductId)
         .collect(Collectors.toSet());
+    
+    log.debug("조회할 상품 ID 수: {}", productIds.size());
     
     // 3. 한 번에 모든 Product 조회
     Map<Long, Product> productMap = productService.findProductsByIds(productIds)
@@ -78,6 +91,7 @@ public class SalesService {
           Product product = productMap.get(salesRequest.getProductId());
           
           if (product == null) {
+            log.warn("상품을 찾을 수 없음 - productId: {}", salesRequest.getProductId());
             throw new BusinessException(SalesErrorCode.PRODUCT_NOT_FOUND);
           }
           
@@ -91,6 +105,7 @@ public class SalesService {
     
     // 5. 일괄 저장
     salesRepository.saveAll(sales);
+    log.info("매출 일괄 업로드 완료 - storeId: {}, 저장된 매출 건수: {}", request.getStoreId(), sales.size());
   }
 
 }
