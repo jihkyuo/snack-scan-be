@@ -93,6 +93,7 @@ public class StoreService {
     StoreProduct storeProduct = StoreProduct.createStoreProduct(
         request.getMinStock(),
         request.getCurrentStock(),
+        request.getSupplementStock(),
         request.getStorePrice(),
         product,
         store);
@@ -116,6 +117,7 @@ public class StoreService {
     StoreProduct storeProduct = StoreProduct.createStoreProduct(
         request.getMinStock(),
         request.getCurrentStock(),
+        request.getSupplementStock(),
         request.getStorePrice(),
         product,
         store);

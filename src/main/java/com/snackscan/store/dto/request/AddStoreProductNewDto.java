@@ -13,6 +13,9 @@ public class AddStoreProductNewDto {
   @NotNull(message = "현재 재고는 필수입니다")
   private int currentStock;
 
+  @NotNull(message = "보충 재고는 필수입니다")
+  private int supplementStock;
+
   @NotNull(message = "매장 가격은 필수입니다")
   private int storePrice;
 

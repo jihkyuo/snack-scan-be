@@ -31,7 +31,12 @@ public class StoreProduct {
   private int currentStock; // 현재 재고
 
   @Column(nullable = false)
+  private int supplementStock; // 보충 재고
+
+  @Column(nullable = false)
   private int storePrice; // 매장 가격
+
+  // todo 도매 업체 추가
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "product_id", nullable = false)
@@ -42,11 +47,12 @@ public class StoreProduct {
   private Store store;
 
   // == 비즈니스 메서드 ==//
-  public static StoreProduct createStoreProduct(int minStock, int currentStock, int storePrice, Product product,
-      Store store) {
+  public static StoreProduct createStoreProduct(int minStock, int currentStock, int supplementStock, int storePrice,
+      Product product, Store store) {
     StoreProduct storeProduct = new StoreProduct();
     storeProduct.minStock = minStock;
     storeProduct.currentStock = currentStock;
+    storeProduct.supplementStock = supplementStock;
     storeProduct.storePrice = storePrice;
     storeProduct.product = product;
     storeProduct.store = store;

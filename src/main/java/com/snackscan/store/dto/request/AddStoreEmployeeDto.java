@@ -3,7 +3,6 @@ package com.snackscan.store.dto.request;
 import java.util.List;
 
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
