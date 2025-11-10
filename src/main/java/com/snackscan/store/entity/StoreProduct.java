@@ -59,4 +59,20 @@ public class StoreProduct {
     return storeProduct;
   }
 
+  // 정보 수정 메서드
+  public void updateInfo(Integer minStock, Integer currentStock, Integer supplementStock, Integer storePrice) {
+    if (minStock != null) {
+      this.minStock = minStock;
+    }
+    if (currentStock != null) {
+      this.currentStock = currentStock;
+    }
+    if (supplementStock != null) {
+      this.supplementStock = supplementStock;
+    }
+    if (storePrice != null) {
+      this.storePrice = storePrice;
+    }
+  }
+
 }

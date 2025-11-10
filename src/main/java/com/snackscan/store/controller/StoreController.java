@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +20,7 @@ import com.snackscan.store.dto.request.AddStoreDto;
 import com.snackscan.store.dto.request.AddStoreEmployeeDto;
 import com.snackscan.store.dto.request.AddStoreProductDto;
 import com.snackscan.store.dto.request.AddStoreProductNewDto;
+import com.snackscan.store.dto.request.UpdateStoreProductRequestDto;
 import com.snackscan.store.dto.response.StoreEmployeeResponseDto;
 import com.snackscan.store.dto.response.StoreProductResponseDto;
 import com.snackscan.store.dto.response.StoreResponseDto;
@@ -41,7 +43,7 @@ public class StoreController {
   // todo 추후 로그인한 토큰으로 사용자 식별
   @PostMapping
   public ResponseEntity<Long> addStore(@Valid @RequestBody AddStoreDto request) {
-    log.info("매장 등록 요청 - name: {}, address: {}, memberId: {}", 
+    log.info("매장 등록 요청 - name: {}, address: {}, memberId: {}",
         request.getName(), request.getAddress(), request.getMemberId());
     Long storeId = storeService.addStore(request);
     log.info("매장 등록 완료 - storeId: {}", storeId);
@@ -101,6 +103,17 @@ public class StoreController {
     Long storeProductId = storeService.addStoreProductNew(id, request);
     log.info("매장 새 상품 등록 완료 - storeId: {}, storeProductId: {}", id, storeProductId);
     return ResponseEntity.status(HttpStatus.CREATED).body(storeProductId);
+  }
+
+  // 매장 상품 수정
+  @PutMapping("/products/{storeProductId}")
+  public ResponseEntity<Void> updateStoreProduct(
+      @PathVariable Long storeProductId,
+      @Valid @RequestBody UpdateStoreProductRequestDto request) {
+    log.info("매장 상품 수정 요청 - storeProductId: {}", storeProductId);
+    storeService.updateStoreProduct(storeProductId, request);
+    log.info("매장 상품 수정 완료 - storeProductId: {}", storeProductId);
+    return ResponseEntity.noContent().build();
   }
 
   // 매장 직원 조회

@@ -18,6 +18,7 @@ import com.snackscan.product.service.ProductService;
 import com.snackscan.store.dto.request.AddStoreDto;
 import com.snackscan.store.dto.request.AddStoreProductDto;
 import com.snackscan.store.dto.request.AddStoreProductNewDto;
+import com.snackscan.store.dto.request.UpdateStoreProductRequestDto;
 import com.snackscan.store.entity.Store;
 import com.snackscan.store.entity.StoreProduct;
 import com.snackscan.store.exception.StoreErrorCode;
@@ -196,5 +197,14 @@ public class StoreService {
   @Transactional(readOnly = true)
   public List<MemberStoreRole> findStoreEmployees(Long storeId) {
     return memberStoreRoleRepository.findByStoreIdAndStoreRole(storeId, Role.EMPLOYEE);
+  }
+
+  // 매장 상품 수정
+  public void updateStoreProduct(Long storeProductId, UpdateStoreProductRequestDto request) {
+    log.debug("매장 상품 수정 시작 - storeProductId: {}", storeProductId);
+    StoreProduct storeProduct = findStoreProductByIdOrThrow(storeProductId);
+    storeProduct.updateInfo(request.getMinStock(), request.getCurrentStock(), request.getSupplementStock(), request.getStorePrice());
+    storeProductRepository.save(storeProduct);
+    log.debug("매장 상품 수정 완료 - storeProductId: {}", storeProductId);
   }
 }
