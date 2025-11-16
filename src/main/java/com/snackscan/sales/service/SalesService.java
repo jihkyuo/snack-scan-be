@@ -15,9 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.snackscan.common.exception.BusinessException;
 import com.snackscan.product.entity.Product;
 import com.snackscan.product.service.ProductService;
-import com.snackscan.sales.dto.request.SalesBulkUploadRequestDto;
 import com.snackscan.sales.dto.request.SalesItemDto;
-import com.snackscan.sales.dto.request.SalesUploadRequestDto;
 import com.snackscan.sales.entity.Sales;
 import com.snackscan.sales.exception.SalesErrorCode;
 import com.snackscan.sales.repository.SalesRepository;
@@ -39,10 +37,10 @@ public class SalesService {
   private final ProductService productService;
 
   // 매출 단건 업로드
-  public Long salesUpload(SalesUploadRequestDto request) {
+  public Long salesUpload(Long storeId, SalesItemDto request) {
     log.debug("매출 단건 업로드 시작 - storeId: {}, productId: {}, quantity: {}, unitPrice: {}",
-        request.getStoreId(), request.getProductName(), request.getQuantity(), request.getUnitPrice());
-    Store store = storeService.findStoreByIdOrThrow(request.getStoreId());
+        storeId, request.getProductName(), request.getQuantity(), request.getUnitPrice());
+    Store store = storeService.findStoreByIdOrThrow(storeId);
     Product product = productService.findProductByNameOrThrow(request.getProductName());
     StoreProduct storeProduct = storeService.findStoreProductByStoreIdAndProductId(store.getId(),
         product.getId());
@@ -70,22 +68,22 @@ public class SalesService {
   }
 
   // 매출 여러 건 업로드
-  public void salesBulkUpload(SalesBulkUploadRequestDto request) {
+  public void salesBulkUpload(Long storeId, List<SalesItemDto> salesList) {
     log.info("매출 일괄 업로드 시작 - storeId: {}, 매출 건수: {}",
-        request.getStoreId(),
-        request.getSalesList() != null ? request.getSalesList().size() : 0);
+        storeId,
+        salesList.size());
 
     // 1. 매장 조회
-    Store store = storeService.findStoreByIdOrThrow(request.getStoreId());
+    Store store = storeService.findStoreByIdOrThrow(storeId);
 
     // 2. 매출 목록 검증
-    if (request.getSalesList() == null || request.getSalesList().isEmpty()) {
-      log.warn("매출 목록이 비어있음 - storeId: {}", request.getStoreId());
+    if (salesList == null || salesList.isEmpty()) {
+      log.warn("매출 목록이 비어있음 - storeId: {}", storeId);
       throw new BusinessException(SalesErrorCode.SALES_LIST_EMPTY);
     }
 
     // 3. 모든 Product Name을 수집
-    Set<String> productNames = request.getSalesList().stream()
+    Set<String> productNames = salesList.stream()
         .map(SalesItemDto::getProductName)
         .collect(Collectors.toSet());
 
@@ -109,16 +107,15 @@ public class SalesService {
     Map<Long, StoreProduct> storeProductMap = storeProducts.stream()
         .collect(Collectors.toMap(
             sp -> sp.getProduct().getId(),
-            Function.identity()
-        ));
+            Function.identity()));
 
     // 8. Sales 엔티티 생성 및 재고 감소
-    List<Sales> sales = request.getSalesList().stream()
-        .map(salesRequest -> {
-          Product product = productMap.get(salesRequest.getProductName());
+    List<Sales> sales = salesList.stream()
+        .map(salesItem -> {
+          Product product = productMap.get(salesItem.getProductName());
 
           if (product == null) {
-            log.warn("상품을 찾을 수 없음 - productName: {}", salesRequest.getProductName());
+            log.warn("상품을 찾을 수 없음 - productName: {}", salesItem.getProductName());
             throw new BusinessException(SalesErrorCode.PRODUCT_NOT_FOUND);
           }
 
@@ -130,20 +127,25 @@ public class SalesService {
 
           // 재고 확인 및 감소
           int stockBeforeSale = storeProduct.getCurrentStock();
-          storeProduct.decreaseStock(salesRequest.getQuantity());
+          storeProduct.decreaseStock(salesItem.getQuantity());
 
           return Sales.createSales(
               store,
               product,
-              salesRequest.getQuantity(),
-              salesRequest.getUnitPrice(),
+              salesItem.getQuantity(),
+              salesItem.getUnitPrice(),
               stockBeforeSale);
         })
         .toList();
 
     // 9. 일괄 저장
     salesRepository.saveAll(sales);
-    log.info("매출 일괄 업로드 완료 - storeId: {}, 저장된 매출 건수: {}", request.getStoreId(), sales.size());
+    log.info("매출 일괄 업로드 완료 - storeId: {}, 저장된 매출 건수: {}", storeId, sales.size());
+  }
+
+  // 매출 조회
+  public List<Sales> findSalesByStoreId(Long storeId) {
+    return salesRepository.findByStoreId(storeId);
   }
 
 }

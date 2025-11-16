@@ -18,9 +18,7 @@ import com.snackscan.member.entity.Member;
 import com.snackscan.member.service.MemberService;
 import com.snackscan.product.entity.Product;
 import com.snackscan.product.service.ProductService;
-import com.snackscan.sales.dto.request.SalesBulkUploadRequestDto;
 import com.snackscan.sales.dto.request.SalesItemDto;
-import com.snackscan.sales.dto.request.SalesUploadRequestDto;
 import com.snackscan.sales.entity.Sales;
 import com.snackscan.sales.exception.SalesErrorCode;
 import com.snackscan.sales.repository.SalesRepository;
@@ -64,14 +62,13 @@ public class SalesServiceTest {
     void 정상적인_매출_단건_등록() {
       // given
       TestData testData = testDataBuilder.build();
-      SalesUploadRequestDto request = new SalesUploadRequestDto();
-      request.setStoreId(testData.storeId);
+      SalesItemDto request = new SalesItemDto();
       request.setProductName(testData.productName);
       request.setQuantity(10);
       request.setUnitPrice(1000);
 
       // when
-      Long salesId = salesService.salesUpload(request);
+      Long salesId = salesService.salesUpload(testData.storeId, request);
 
       // then
       Sales sales = salesService.findSalesByIdOrThrow(salesId);
@@ -86,14 +83,15 @@ public class SalesServiceTest {
     void 존재하지_않는_매장으로_매출_등록_시_예외_발생() {
       // given
       TestData testData = testDataBuilder.build();
-      SalesUploadRequestDto request = new SalesUploadRequestDto();
-      request.setStoreId(999L); // 존재하지 않는 매장 ID
+      SalesItemDto request = new SalesItemDto();
       request.setProductName(testData.productName);
       request.setQuantity(10);
       request.setUnitPrice(1000);
 
       // when & then
-      assertThatThrownBy(() -> salesService.salesUpload(request))
+      assertThatThrownBy(() -> salesService.salesUpload(
+          999L, // 존재하지 않는 매장 ID
+          request))
           .isInstanceOf(BusinessException.class);
     }
 
@@ -102,14 +100,13 @@ public class SalesServiceTest {
     void 존재하지_않는_상품으로_매출_등록_시_예외_발생() {
       // given
       TestData testData = testDataBuilder.build();
-      SalesUploadRequestDto request = new SalesUploadRequestDto();
-      request.setStoreId(testData.storeId);
+      SalesItemDto request = new SalesItemDto();
       request.setProductName("존재하지 않는 상품"); // 존재하지 않는 상품 Name
       request.setQuantity(10);
       request.setUnitPrice(1000);
 
       // when & then
-      assertThatThrownBy(() -> salesService.salesUpload(request))
+      assertThatThrownBy(() -> salesService.salesUpload(testData.storeId, request))
           .isInstanceOf(BusinessException.class);
     }
   }
@@ -123,42 +120,37 @@ public class SalesServiceTest {
     void 정상적인_매출_여러_건_등록() {
       // given
       TestData testData = testDataBuilder.build();
-      
+
       SalesItemDto salesItem1 = SalesItemDto.builder()
           .productName(testData.productName)
           .quantity(10)
           .unitPrice(1000)
           .build();
-      
+
       SalesItemDto salesItem2 = SalesItemDto.builder()
           .productName(testData.productName)
           .quantity(20)
           .unitPrice(2000)
           .build();
 
-      SalesBulkUploadRequestDto request = SalesBulkUploadRequestDto.builder()
-          .storeId(testData.storeId)
-          .salesList(List.of(salesItem1, salesItem2))
-          .build();
-
       // when
-      salesService.salesBulkUpload(request);
+      salesService.salesBulkUpload(testData.storeId, List.of(salesItem1, salesItem2));
 
       // then
       List<Sales> createdSales = salesRepository.findAll();
       assertThat(createdSales).hasSize(2);
-      
+
       // 각 매출 항목 검증
       assertThat(createdSales).allSatisfy(sales -> {
         assertThat(sales.getStore().getId()).isEqualTo(testData.storeId);
         assertThat(sales.getProduct().getName()).isEqualTo(testData.productName);
       });
-      
+
       // 수량별 검증
       assertThat(createdSales)
           .extracting(Sales::getQuantity)
           .containsExactlyInAnyOrder(10, 20);
-      
+
       assertThat(createdSales)
           .extracting(Sales::getUnitPrice)
           .containsExactlyInAnyOrder(1000, 2000);
@@ -169,13 +161,9 @@ public class SalesServiceTest {
     void 빈_매출_목록으로_등록_시_예외_발생() {
       // given
       TestData testData = testDataBuilder.build();
-      SalesBulkUploadRequestDto request = SalesBulkUploadRequestDto.builder()
-          .storeId(testData.storeId)
-          .salesList(List.of()) // 빈 목록
-          .build();
 
       // when & then
-      assertThatThrownBy(() -> salesService.salesBulkUpload(request))
+      assertThatThrownBy(() -> salesService.salesBulkUpload(testData.storeId, List.of()))
           .isInstanceOf(BusinessException.class);
     }
   }
@@ -189,13 +177,12 @@ public class SalesServiceTest {
     void 존재하는_매출_조회() {
       // given
       TestData testData = testDataBuilder.build();
-      SalesUploadRequestDto request = new SalesUploadRequestDto();
-      request.setStoreId(testData.storeId);
+      SalesItemDto request = new SalesItemDto();
       request.setProductName(testData.productName);
       request.setQuantity(10);
       request.setUnitPrice(1000);
-      
-      Long salesId = salesService.salesUpload(request);
+
+      Long salesId = salesService.salesUpload(testData.storeId, request);
 
       // when
       Sales sales = salesService.findSalesByIdOrThrow(salesId);
@@ -236,7 +223,8 @@ public class SalesServiceTest {
   }
 
   // 테스트 데이터 클래스
-  private record TestData(Long storeId, String productName) {}
+  private record TestData(Long storeId, String productName) {
+  }
 
   // 테스트 헬퍼 메서드들
   private Member createMember(String loginId, String name, String phoneNumber) {
