@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.snackscan.common.exception.BusinessException;
 import com.snackscan.product.entity.Product;
 import com.snackscan.product.service.ProductService;
-import com.snackscan.sales.dto.request.SalesItemDto;
+import com.snackscan.sales.dto.request.SalesRequestDto;
 import com.snackscan.sales.entity.Sales;
 import com.snackscan.sales.exception.SalesErrorCode;
 import com.snackscan.sales.repository.SalesRepository;
@@ -37,7 +37,7 @@ public class SalesService {
   private final ProductService productService;
 
   // 매출 단건 업로드
-  public Long salesUpload(Long storeId, SalesItemDto request) {
+  public Long salesUpload(Long storeId, SalesRequestDto request) {
     log.debug("매출 단건 업로드 시작 - storeId: {}, productId: {}, quantity: {}, unitPrice: {}",
         storeId, request.getProductName(), request.getQuantity(), request.getUnitPrice());
     Store store = storeService.findStoreByIdOrThrow(storeId);
@@ -68,7 +68,7 @@ public class SalesService {
   }
 
   // 매출 여러 건 업로드
-  public void salesBulkUpload(Long storeId, List<SalesItemDto> salesList) {
+  public void salesBulkUpload(Long storeId, List<SalesRequestDto> salesList) {
     log.info("매출 일괄 업로드 시작 - storeId: {}, 매출 건수: {}",
         storeId,
         salesList.size());
@@ -84,7 +84,7 @@ public class SalesService {
 
     // 3. 모든 Product Name을 수집
     Set<String> productNames = salesList.stream()
-        .map(SalesItemDto::getProductName)
+        .map(SalesRequestDto::getProductName)
         .collect(Collectors.toSet());
 
     log.debug("조회할 상품 Name 수: {}", productNames.size());

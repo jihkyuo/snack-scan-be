@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SalesItemDto {
+public class SalesRequestDto {
   @NotNull(message = "상품 이름은 필수입니다")
   private String productName;
 

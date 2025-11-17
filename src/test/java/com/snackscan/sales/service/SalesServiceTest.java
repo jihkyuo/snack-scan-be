@@ -18,7 +18,7 @@ import com.snackscan.member.entity.Member;
 import com.snackscan.member.service.MemberService;
 import com.snackscan.product.entity.Product;
 import com.snackscan.product.service.ProductService;
-import com.snackscan.sales.dto.request.SalesItemDto;
+import com.snackscan.sales.dto.request.SalesRequestDto;
 import com.snackscan.sales.entity.Sales;
 import com.snackscan.sales.exception.SalesErrorCode;
 import com.snackscan.sales.repository.SalesRepository;
@@ -62,7 +62,7 @@ public class SalesServiceTest {
     void 정상적인_매출_단건_등록() {
       // given
       TestData testData = testDataBuilder.build();
-      SalesItemDto request = new SalesItemDto();
+      SalesRequestDto request = new SalesRequestDto();
       request.setProductName(testData.productName);
       request.setQuantity(10);
       request.setUnitPrice(1000);
@@ -83,7 +83,7 @@ public class SalesServiceTest {
     void 존재하지_않는_매장으로_매출_등록_시_예외_발생() {
       // given
       TestData testData = testDataBuilder.build();
-      SalesItemDto request = new SalesItemDto();
+      SalesRequestDto request = new SalesRequestDto();
       request.setProductName(testData.productName);
       request.setQuantity(10);
       request.setUnitPrice(1000);
@@ -100,7 +100,7 @@ public class SalesServiceTest {
     void 존재하지_않는_상품으로_매출_등록_시_예외_발생() {
       // given
       TestData testData = testDataBuilder.build();
-      SalesItemDto request = new SalesItemDto();
+      SalesRequestDto request = new SalesRequestDto();
       request.setProductName("존재하지 않는 상품"); // 존재하지 않는 상품 Name
       request.setQuantity(10);
       request.setUnitPrice(1000);
@@ -121,13 +121,13 @@ public class SalesServiceTest {
       // given
       TestData testData = testDataBuilder.build();
 
-      SalesItemDto salesItem1 = SalesItemDto.builder()
+      SalesRequestDto salesItem1 = SalesRequestDto.builder()
           .productName(testData.productName)
           .quantity(10)
           .unitPrice(1000)
           .build();
 
-      SalesItemDto salesItem2 = SalesItemDto.builder()
+      SalesRequestDto salesItem2 = SalesRequestDto.builder()
           .productName(testData.productName)
           .quantity(20)
           .unitPrice(2000)
@@ -177,7 +177,7 @@ public class SalesServiceTest {
     void 존재하는_매출_조회() {
       // given
       TestData testData = testDataBuilder.build();
-      SalesItemDto request = new SalesItemDto();
+      SalesRequestDto request = new SalesRequestDto();
       request.setProductName(testData.productName);
       request.setQuantity(10);
       request.setUnitPrice(1000);
