@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.snackscan.sales.dto.request.SalesBulkRequestDto;
 import com.snackscan.sales.dto.request.SalesRequestDto;
 import com.snackscan.sales.dto.response.SalesResponseDto;
 import com.snackscan.sales.entity.Sales;
@@ -31,10 +32,10 @@ public class SalesController {
   // 매출 일괄 업로드
   @PostMapping("/stores/{storeId}/bulk")
   public ResponseEntity<Void> salesBulkUpload(@PathVariable Long storeId,
-      @Valid @RequestBody List<SalesRequestDto> salesList) {
-    log.info("매출 일괄 업로드 요청 - storeId: {}, 매출 건수: {}", storeId, salesList.size());
-    salesService.salesBulkUpload(storeId, salesList);
-    log.info("매출 일괄 업로드 완료 - storeId: {}, 매출 건수: {}", storeId, salesList.size());
+      @Valid @RequestBody SalesBulkRequestDto request) {
+    log.info("매출 일괄 업로드 요청 - storeId: {}, 매출 건수: {}", storeId, request.getSalesList().size());
+    salesService.salesBulkUpload(storeId, request.getSalesList());
+    log.info("매출 일괄 업로드 완료 - storeId: {}, 매출 건수: {}", storeId, request.getSalesList().size());
     return ResponseEntity.ok().build();
   }
 
