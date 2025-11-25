@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.snackscan.common.exception.BusinessException;
 import com.snackscan.supplier.dto.request.AddSupplierRequestDto;
+import com.snackscan.supplier.dto.request.EditSupplierRequestDto;
 import com.snackscan.supplier.entity.Supplier;
 import com.snackscan.supplier.exception.SupplierErrorCode;
 import com.snackscan.supplier.repository.SupplierRepository;
@@ -22,7 +23,7 @@ public class SupplierService {
 
   // 공급자 등록
   public Long addSupplier(AddSupplierRequestDto request) {
-    Supplier supplier = Supplier.createSupplier(request.getName(), request.getAddress(), request.getPhoneNumber(),
+    Supplier supplier = Supplier.create(request.getName(), request.getAddress(), request.getPhoneNumber(),
         request.getEmail(), request.getWebsite());
     supplierRepository.save(supplier);
     return supplier.getId();
@@ -42,7 +43,16 @@ public class SupplierService {
   }
 
   // 공급자 수정
+  public void update(Long supplierId, EditSupplierRequestDto request) {
+    Supplier supplier = findSupplierByIdOrThrow(supplierId);
+    supplier.update(request.getName(), request.getAddress(), request.getPhoneNumber(), request.getEmail(),
+        request.getWebsite());
+  }
 
   // 공급자 삭제
+  public void delete(Long supplierId) {
+    Supplier supplier = findSupplierByIdOrThrow(supplierId);
+    supplierRepository.delete(supplier);
+  }
 
 }

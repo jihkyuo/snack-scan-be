@@ -33,7 +33,7 @@ public class Supplier {
   @Column(length = 100)
   private String website;
 
-  public static Supplier createSupplier(String name, String address, String phoneNumber, String email, String website) {
+  public static Supplier create(String name, String address, String phoneNumber, String email, String website) {
     Supplier supplier = new Supplier();
     supplier.name = name;
     supplier.address = address;
@@ -41,6 +41,19 @@ public class Supplier {
     supplier.email = email;
     supplier.website = website;
     return supplier;
+  }
+
+  public void update(String name, String address, String phoneNumber, String email, String website) {
+    if (name != null && !name.trim().isEmpty())
+      this.name = name;
+    if (address != null && !address.trim().isEmpty())
+      this.address = address;
+    if (phoneNumber != null && !phoneNumber.trim().isEmpty())
+      this.phoneNumber = phoneNumber;
+    if (email != null && !email.trim().isEmpty())
+      this.email = email;
+    if (website != null && !website.trim().isEmpty())
+      this.website = website;
   }
 
 }

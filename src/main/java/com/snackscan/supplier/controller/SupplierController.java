@@ -6,14 +6,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.snackscan.supplier.dto.request.AddSupplierRequestDto;
+import com.snackscan.supplier.dto.request.EditSupplierRequestDto;
 import com.snackscan.supplier.dto.response.SupplierResponseDto;
 import com.snackscan.supplier.entity.Supplier;
 import com.snackscan.supplier.service.SupplierService;
@@ -57,5 +60,24 @@ public class SupplierController {
     Supplier supplier = supplierService.findSupplierByIdOrThrow(id);
     log.info("공급자 조회 완료 - supplierId: {}", id);
     return ResponseEntity.ok(SupplierResponseDto.from(supplier));
+  }
+
+  // 공급자 수정
+  @PutMapping("/{id}")
+  public ResponseEntity<Void> updateSupplier(@PathVariable Long id,
+      @Valid @RequestBody EditSupplierRequestDto request) {
+    log.info("공급자 수정 요청 - supplierId: {}", id);
+    supplierService.update(id, request);
+    log.info("공급자 수정 완료 - supplierId: {}", id);
+    return ResponseEntity.ok().build();
+  }
+
+  // 공급자 삭제
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> deleteSupplier(@PathVariable Long id) {
+    log.info("공급자 삭제 요청 - supplierId: {}", id);
+    supplierService.delete(id);
+    log.info("공급자 삭제 완료 - supplierId: {}", id);
+    return ResponseEntity.noContent().build();
   }
 }
